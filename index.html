@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>LIAMSI Restaurant</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:var(--tg-theme-bg-color,#0e0e10);
+  --card:var(--tg-theme-secondary-bg-color,#1a1a1d);
+  --text:var(--tg-theme-text-color,#f4f4f5);
+  --hint:var(--tg-theme-hint-color,#9a9aa2);
+  --accent:#e8590c;
+  --line:rgba(127,127,127,.25);
+  --danger:#ef4444;
+}
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--text);font-family:"Bricolage Grotesque",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:16px;line-height:1.4;-webkit-text-size-adjust:100%}
+#app{max-width:600px;margin:0 auto;padding:16px 16px 130px}
+h1{font-size:28px;line-height:1.1;font-weight:800;margin:4px 0;letter-spacing:-.02em}
+h2{font-size:22px;font-weight:800;margin:22px 0 10px;letter-spacing:-.01em}
+h3{font-size:17px;font-weight:600;margin:0 0 10px}
+.tag{color:var(--hint);margin:0 0 14px}
+.banner{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin:0 0 12px;font-size:14px;color:var(--hint)}
+input,textarea,select{width:100%;background:var(--card);color:var(--text);border:1px solid var(--line);border-radius:12px;padding:13px 14px;font:inherit}
+textarea{min-height:84px;resize:vertical}
+label{display:block;font-weight:600;font-size:14px;margin:12px 0 6px}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:12px 0 2px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;background:var(--card);color:var(--text);border:1px solid var(--line);border-radius:999px;padding:9px 16px;font:600 15px inherit;font-family:inherit;cursor:pointer}
+.card{display:flex;gap:12px;background:var(--card);border-radius:18px;padding:12px;margin-bottom:12px}
+.thumb{flex:none;width:84px;height:84px;border-radius:14px;background:rgba(127,127,127,.15);display:grid;place-items:center;font-size:40px;overflow:hidden}
+.thumb img{width:100%;height:100%;object-fit:cover}
+.info{flex:1;min-width:0;display:flex;flex-direction:column}
+.info b{font-size:17px;font-weight:600}
+.info p{margin:2px 0 8px;color:var(--hint);font-size:14px}
+.row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:auto}
+.price{font-weight:800;font-size:18px}
+.add{background:var(--accent);color:#fff;border:0;border-radius:12px;padding:10px 20px;font:700 15px inherit;font-family:inherit;cursor:pointer}
+.step{display:flex;align-items:center;gap:6px;background:rgba(127,127,127,.18);border-radius:12px;padding:3px}
+.step button{width:34px;height:34px;border:0;border-radius:10px;background:transparent;color:var(--accent);font-size:22px;font-weight:700;cursor:pointer}
+.step span{min-width:22px;text-align:center;font-weight:800}
+.line{display:flex;justify-content:space-between;gap:12px;padding:6px 0}
+.line.total{border-top:1px solid var(--line);margin-top:6px;padding-top:12px;font-size:20px;font-weight:800}
+.box{background:var(--card);border-radius:18px;padding:16px;margin-bottom:14px}
+.pay{display:flex;gap:12px;align-items:flex-start;border:2px solid var(--line);border-radius:14px;padding:12px;margin-bottom:10px;cursor:pointer}
+.pay.on{border-color:var(--accent);background:rgba(232,89,12,.1)}
+.pay .dot{flex:none;width:20px;height:20px;border-radius:50%;border:2px solid var(--hint);margin-top:3px}
+.pay.on .dot{border-color:var(--accent);background:radial-gradient(var(--accent) 45%,transparent 50%)}
+.pay b{display:block}
+.pay span{color:var(--hint);font-size:14px}
+.ghost{width:100%;background:transparent;color:var(--text);border:1px solid var(--line);border-radius:12px;padding:12px;font:600 15px inherit;font-family:inherit;cursor:pointer}
+.err{color:var(--danger);font-size:14px;min-height:20px;margin:6px 0 0}
+.bar{position:fixed;left:0;right:0;bottom:0;padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px));background:linear-gradient(transparent,var(--bg) 35%)}
+.bar button{display:flex;justify-content:space-between;align-items:center;width:100%;max-width:600px;margin:0 auto;background:var(--accent);color:#fff;border:0;border-radius:16px;padding:16px 18px;font:800 17px inherit;font-family:inherit;cursor:pointer}
+.bar button:disabled{opacity:.55}
+.bar[hidden]{display:none}
+.center{text-align:center;padding-top:60px}
+.big{font-size:64px}
+.btn{display:block;width:100%;margin-top:12px;background:var(--accent);color:#fff;border:0;border-radius:16px;padding:16px;font:800 17px inherit;font-family:inherit;cursor:pointer}
+.muted{color:var(--hint)}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+</style>
+</head>
+<body>
+<div id="app"><p class="muted">Loading the menu…</p></div>
+<div class="bar" id="bar" hidden></div>
+<script>
+var API = "https://liamsi27.app.n8n.cloud/webhook/liamsi";
+var tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
+if (tg) { tg.ready(); tg.expand(); }
+var tgUser = tg && tg.initDataUnsafe && tg.initDataUnsafe.user ? tg.initDataUnsafe.user : null;
+
+var menu = null, cart = {}, view = "menu", query = "", placing = false, lastOrder = null;
+var form = {
+  name: tgUser ? [tgUser.first_name, tgUser.last_name].filter(Boolean).join(" ") : "",
+  phone: "", zone: "", address: "", instructions: "", payment: "cash_on_delivery", lat: null, lng: null
+};
+
+var app = document.getElementById("app");
+var bar = document.getElementById("bar");
+
+function esc(s) {
+  return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+}
+function fmt(n) { return "₦" + Number(n).toLocaleString("en-NG"); }
+function itemById(id) { return menu.items.find(function (i) { return i.itemId === id; }); }
+function count() { var c = 0; for (var k in cart) c += cart[k]; return c; }
+function subtotal() {
+  var t = 0;
+  for (var k in cart) { var it = itemById(k); if (it) t += it.price * cart[k]; }
+  return t;
+}
+function zoneObj() { return menu.zones.find(function (z) { return z.zone === form.zone; }) || null; }
+function fee() { var z = zoneObj(); return z ? z.fee : 0; }
+
+/* ---------- loading ---------- */
+function load() {
+  fetch(API + "/menu")
+    .then(function (r) { return r.json(); })
+    .then(function (d) { menu = d; showMenu(); })
+    .catch(function () {
+      app.innerHTML = '<div class="center"><div class="big">😕</div><h2>Could not load the menu</h2><p class="muted">Check your connection and try again.</p><button class="btn" id="retry">Try again</button></div>';
+      document.getElementById("retry").onclick = load;
+    });
+}
+
+/* ---------- menu ---------- */
+function showMenu() {
+  view = "menu";
+  setBack(false);
+  var banner = tg && tg.initData ? "" : '<div class="banner">Open this menu from the Telegram bot to place an order.</div>';
+  app.innerHTML = banner +
+    "<h1>" + esc(menu.restaurant) + '</h1><p class="tag">Fresh meals, delivered fast</p>' +
+    '<input id="q" type="search" placeholder="Search meals…" value="' + esc(query) + '" aria-label="Search meals">' +
+    '<div class="chips" id="chips">' + menu.categories.map(function (c, i) { return '<button class="chip" data-act="cat" data-i="' + i + '">' + esc(c) + "</button>"; }).join("") + "</div>" +
+    '<div id="list"></div>';
+  document.getElementById("q").oninput = function (e) { query = e.target.value; renderList(); };
+  renderList();
+  renderBar();
+}
+function ctrl(id) {
+  var q = cart[id] || 0;
+  if (!q) return '<button class="add" data-act="inc" data-id="' + id + '">Add</button>';
+  return '<div class="step"><button data-act="dec" data-id="' + id + '" aria-label="Remove one">−</button><span>' + q + '</span><button data-act="inc" data-id="' + id + '" aria-label="Add one">+</button></div>';
+}
+function renderList() {
+  var term = query.trim().toLowerCase(), html = "";
+  menu.categories.forEach(function (c, i) {
+    var items = menu.items.filter(function (it) {
+      return it.category === c && (!term || (it.name + " " + (it.description || "")).toLowerCase().indexOf(term) > -1);
+    });
+    if (!items.length) return;
+    html += '<h2 id="cat' + i + '">' + esc(c) + "</h2>";
+    items.forEach(function (it) {
+      var img = it.imageUrl ? '<img src="' + esc(it.imageUrl) + '" alt="">' : "<span>" + (it.emoji || "🍽️") + "</span>";
+      html += '<div class="card"><div class="thumb">' + img + '</div><div class="info"><b>' + esc(it.name) + "</b><p>" + esc(it.description || "") + '</p><div class="row"><span class="price">' + fmt(it.price) + "</span>" + ctrl(it.itemId) + "</div></div></div>";
+    });
+  });
+  document.getElementById("list").innerHTML = html || '<p class="muted">No meals match your search.</p>';
+}
+
+/* ---------- cart ---------- */
+function showCart() {
+  view = "cart";
+  setBack(true);
+  var html = "<h1>Your cart</h1>";
+  Object.keys(cart).forEach(function (id) {
+    var it = itemById(id);
+    if (!it) return;
+    html += '<div class="card"><div class="thumb">' + (it.imageUrl ? '<img src="' + esc(it.imageUrl) + '" alt="">' : "<span>" + (it.emoji || "🍽️") + "</span>") + '</div><div class="info"><b>' + esc(it.name) + '</b><div class="row"><span class="price">' + fmt(it.price * cart[id]) + "</span>" + ctrl(id) + "</div></div></div>";
+  });
+  html += '<div class="box"><div class="line"><span>Subtotal</span><span>' + fmt(subtotal()) + '</span></div><p class="muted" style="margin:6px 0 0">Delivery fee is added at checkout, based on your area.</p></div>';
+  app.innerHTML = html;
+  renderBar();
+}
+
+/* ---------- checkout ---------- */
+function showCheckout() {
+  view = "checkout";
+  setBack(true);
+  var zones = '<option value="">Choose your area</option>' + menu.zones.map(function (z) {
+    return '<option value="' + esc(z.zone) + '"' + (form.zone === z.zone ? " selected" : "") + ">" + esc(z.zone) + " - " + fmt(z.fee) + "</option>";
+  }).join("");
+  app.innerHTML = "<h1>Checkout</h1>" +
+    '<div class="box"><h3>Your details</h3><label for="f-name">Name</label><input id="f-name" autocomplete="name" value="' + esc(form.name) + '">' +
+    '<label for="f-phone">Phone number (for the rider)</label><input id="f-phone" type="tel" autocomplete="tel" placeholder="+234…" value="' + esc(form.phone) + '"></div>' +
+    '<div class="box"><h3>Delivery address</h3><label for="f-zone">Delivery area</label><select id="f-zone">' + zones + "</select>" +
+    '<p class="muted" id="zone-areas" style="font-size:13px;margin:6px 0 0"></p>' +
+    '<button class="ghost" id="loc" style="margin-top:12px" type="button">' + (form.lat !== null ? "📍 Location added ✓" : "📍 Use my current location") + "</button>" +
+    '<label for="f-addr">Address (house number, street, landmark)</label><textarea id="f-addr">' + esc(form.address) + "</textarea>" +
+    '<label for="f-ins">Special instructions (optional)</label><input id="f-ins" placeholder="e.g. less pepper, call on arrival" value="' + esc(form.instructions) + '"></div>' +
+    '<div class="box"><h3>Payment</h3>' +
+    '<div class="pay" data-act="pay" data-v="cash_on_delivery"><div class="dot"></div><div><b>Cash on delivery</b><span>Pay the rider when your food arrives</span></div></div>' +
+    '<div class="pay" data-act="pay" data-v="bank_transfer"><div class="dot"></div><div><b>Bank transfer</b><span>We will send our account details in chat after your order is confirmed</span></div></div></div>' +
+    '<div class="box" id="sum"></div><p class="err" id="err" role="alert"></p>';
+  document.getElementById("f-name").oninput = function (e) { form.name = e.target.value; };
+  document.getElementById("f-phone").oninput = function (e) { form.phone = e.target.value; };
+  document.getElementById("f-addr").oninput = function (e) { form.address = e.target.value; };
+  document.getElementById("f-ins").oninput = function (e) { form.instructions = e.target.value; };
+  document.getElementById("f-zone").onchange = function (e) { form.zone = e.target.value; renderSummary(); renderBar(); };
+  document.getElementById("loc").onclick = getLocation;
+  renderPay();
+  renderSummary();
+  renderBar();
+}
+function renderPay() {
+  document.querySelectorAll(".pay").forEach(function (el) {
+    el.classList.toggle("on", el.getAttribute("data-v") === form.payment);
+  });
+}
+function renderSummary() {
+  var z = zoneObj();
+  var a = document.getElementById("zone-areas");
+  if (a) a.textContent = z && z.areas ? "Includes: " + z.areas : "";
+  document.getElementById("sum").innerHTML =
+    '<div class="line"><span>Subtotal</span><span>' + fmt(subtotal()) + "</span></div>" +
+    '<div class="line"><span>Delivery</span><span>' + (z ? fmt(z.fee) : "Choose area") + "</span></div>" +
+    '<div class="line total"><span>Total</span><span>' + fmt(subtotal() + fee()) + "</span></div>";
+}
+function getLocation() {
+  var btn = document.getElementById("loc");
+  if (!navigator.geolocation) { btn.textContent = "Location not available"; return; }
+  btn.textContent = "Finding you…";
+  navigator.geolocation.getCurrentPosition(function (p) {
+    form.lat = p.coords.latitude;
+    form.lng = p.coords.longitude;
+    btn.textContent = "📍 Location added ✓";
+  }, function () {
+    btn.textContent = "📍 Could not get location - type your address";
+  }, { enableHighAccuracy: true, timeout: 10000 });
+}
+function placeOrder() {
+  if (placing) return;
+  var err = document.getElementById("err");
+  var phoneDigits = form.phone.replace(/[^0-9]/g, "");
+  var msg = "";
+  if (form.name.trim().length < 2) msg = "Please enter your name.";
+  else if (phoneDigits.length < 10) msg = "Please enter a valid phone number.";
+  else if (!form.zone) msg = "Please choose your delivery area.";
+  else if (form.address.trim().length < 8) msg = "Please enter your full delivery address.";
+  else if (!tgUser) msg = "Open this menu from the Telegram bot to place an order.";
+  if (msg) { err.textContent = msg; window.scrollTo(0, document.body.scrollHeight); return; }
+  err.textContent = "";
+  placing = true;
+  renderBar();
+  var items = Object.keys(cart).map(function (id) { return { itemId: id, qty: cart[id] }; });
+  fetch(API + "/order", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      telegramUserId: String(tgUser.id),
+      initData: tg.initData,
+      name: form.name.trim(),
+      phone: form.phone.trim(),
+      zone: form.zone,
+      address: form.address.trim(),
+      instructions: form.instructions.trim(),
+      paymentMethod: form.payment,
+      latitude: form.lat,
+      longitude: form.lng,
+      items: items
+    })
+  }).then(function (r) {
+    return r.json().then(function (d) { return { ok: r.ok, d: d }; });
+  }).then(function (res) {
+    placing = false;
+    if (res.ok && res.d && res.d.ok) {
+      lastOrder = res.d;
+      cart = {};
+      showSuccess();
+    } else {
+      err.textContent = (res.d && res.d.error) || "Something went wrong. Please try again.";
+      renderBar();
+    }
+  }).catch(function () {
+    placing = false;
+    err.textContent = "Network problem. Please check your connection and try again.";
+    renderBar();
+  });
+}
+
+/* ---------- success ---------- */
+function showSuccess() {
+  view = "success";
+  setBack(false);
+  app.innerHTML = '<div class="center"><div class="big">🎉</div><h1>Order placed!</h1>' +
+    '<p>Your order <b>#' + esc(lastOrder.orderId) + "</b> has been received.</p>" +
+    "<p>Total: <b>" + fmt(lastOrder.total) + '</b></p><p class="muted">We will message you here in Telegram at every step.</p>' +
+    '<button class="btn" id="done">Done</button><button class="ghost" id="again" style="margin-top:10px">Back to menu</button></div>';
+  document.getElementById("done").onclick = function () { if (tg) tg.close(); };
+  document.getElementById("again").onclick = showMenu;
+  renderBar();
+}
+
+/* ---------- bottom bar and navigation ---------- */
+function renderBar() {
+  var c = count();
+  if (view === "menu" && c > 0) {
+    bar.hidden = false;
+    bar.innerHTML = '<button data-act="cart"><span>🛒 View cart · ' + c + "</span><span>" + fmt(subtotal()) + "</span></button>";
+  } else if (view === "cart" && c > 0) {
+    bar.hidden = false;
+    bar.innerHTML = '<button data-act="checkout"><span>Checkout</span><span>' + fmt(subtotal()) + "</span></button>";
+  } else if (view === "checkout") {
+    bar.hidden = false;
+    bar.innerHTML = '<button data-act="place"' + (placing ? " disabled" : "") + "><span>" + (placing ? "Placing order…" : "Place order") + "</span><span>" + fmt(subtotal() + fee()) + "</span></button>";
+  } else {
+    bar.hidden = true;
+    bar.innerHTML = "";
+  }
+}
+function goBack() {
+  if (view === "checkout") showCart();
+  else if (view === "cart") showMenu();
+}
+function setBack(show) {
+  if (!tg || !tg.BackButton) return;
+  tg.BackButton.offClick(goBack);
+  if (show) { tg.BackButton.onClick(goBack); tg.BackButton.show(); } else { tg.BackButton.hide(); }
+}
+
+document.addEventListener("click", function (e) {
+  var el = e.target.closest("[data-act]");
+  if (!el) return;
+  var act = el.getAttribute("data-act"), id = el.getAttribute("data-id");
+  if (act === "inc" || act === "dec") {
+    cart[id] = Math.max(0, Math.min(20, (cart[id] || 0) + (act === "inc" ? 1 : -1)));
+    if (!cart[id]) delete cart[id];
+    if (view === "menu") { renderList(); renderBar(); }
+    else if (view === "cart") { if (count() === 0) showMenu(); else showCart(); }
+  } else if (act === "cat") {
+    query = "";
+    var q = document.getElementById("q");
+    if (q) q.value = "";
+    renderList();
+    var t = document.getElementById("cat" + el.getAttribute("data-i"));
+    if (t) t.scrollIntoView({ behavior: "smooth", block: "start" });
+  } else if (act === "cart") showCart();
+  else if (act === "checkout") showCheckout();
+  else if (act === "place") placeOrder();
+  else if (act === "pay") { form.payment = el.getAttribute("data-v"); renderPay(); }
+});
+
+load();
+</script>
+</body>
+</html>
